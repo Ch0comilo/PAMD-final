@@ -1,25 +1,38 @@
-# Comandos Docker
 
-docker-compose build
+# MLOps & Big Data Streaming Pipeline
 
-docker-compose up
+Este proyecto despliega una arquitectura End-to-End contenerizada para la ingesta, procesamiento y orquestación de modelos de Machine Learning.
 
-# Contraseñas
+## Arquitectura
 
-Jupyter Token : hola-mundo
+El entorno levanta los siguientes servicios mediante Docker:
 
-### Airflow
+* **Ingesta:** Zookeeper & Kafka
+* **Procesamiento:** Apache Spark (Master & Worker) con soporte Delta Lake
+* **Desarrollo:** JupyterLab
+* **Orquestación:** Apache Airflow
+* **Registro de Modelos:** MLflow
+* **Metadatos:** PostgreSQL
 
-User : admin
+## Detener entornos anteriores
 
-Password : admin
+```bash
+docker-compose up --build -d
+```
 
-# Puertos
+## Despliegue
 
-MLFLOW : 5000
+Para iniciar todos los servicios en segundo plano, ejecuta:
 
-JUPYTERLAB : 8888
+```bash
+docker-compose up --build -d
+```
 
-AIRFLOW : 8081
+## Accesos y Credenciales
 
-SPARK : 8080
+| **Servicio**     | **URL**         | **Usuario / Token** | **Contraseña** |
+| ---------------------- | --------------------- | ------------------------- | --------------------- |
+| **JupyterLab**   | http://localhost:8888 | `hola-mundo`            | N/A                   |
+| **Airflow UI**   | http://localhost:8081 | `admin`                 | `admin`             |
+| **MLflow UI**    | http://localhost:5000 | N/A                       | N/A                   |
+| **Spark Master** | http://localhost:8080 | N/A                       | N/A                   |
