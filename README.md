@@ -1,4 +1,3 @@
-
 # MLOps & Big Data Streaming Pipeline
 
 Este proyecto despliega una arquitectura End-to-End contenerizada para la ingesta, procesamiento y orquestación de modelos de Machine Learning.
@@ -17,7 +16,7 @@ El entorno levanta los siguientes servicios mediante Docker:
 ## Detener entornos anteriores
 
 ```bash
-docker-compose up --build -d
+docker-compose down
 ```
 
 ## Despliegue
