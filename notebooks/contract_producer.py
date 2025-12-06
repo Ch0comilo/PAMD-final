@@ -25,25 +25,27 @@ SOCRATA_DOMAIN = "www.datos.gov.co"
 SOCRATA_DATASET_ID = "jbjy-vk9h" # Contratos SECOP I
 client = Socrata(SOCRATA_DOMAIN, None, timeout=120)
 
-# Departamentos del Eje Cafetero para el filtro WHERE de la API
-# Nota: La API requiere nombres en mayúsculas y sin acentos.
-DEPARTMENTS = ["CALDAS", "QUINDIO", "RISARALDA", "TOLIMA", "ANTIOQUIA", "VALLE DEL CAUCA"]
-DEPARTMENTS_STR = ", ".join([f"'{d}'" for d in DEPARTMENTS]) 
+# DEPARTAMENTOS: Usamos el formato estandarizado (Capitalizado, sin tildes en Socrata)
+# Incluimos Tolima y Valle del Cauca, claves para el Eje Cafetero.
+DEPARTMENTS_SOQL_VALUES = [
+    "Antioquia", "Caldas", "Quindio", "Risaralda", "Tolima", "Valle del Cauca"
+]
+DEPARTMENTS_STR = ", ".join([f"'{d}'" for d in DEPARTMENTS_SOQL_VALUES]) 
 
 # Mapeo de columnas: API Field Name (SOQL) -> Alias (Kafka JSON Key)
-# Seleccionamos un subconjunto relevante de la lista completa proporcionada.
+# Basado en la lista completa que proporcionaste.
 COLUMNS_MAP = {
-    # CRÍTICAS (Se mantienen para ML)
+    # CRÍTICAS PARA ML (Se mantienen en Silver)
     "id_contrato": "id_contrato", 
-    "objeto_del_contrato": "objeto_contrato",
+    "objeto_del_contrato": "objeto_contrato", 
     "nombre_entidad": "entidad",
     "codigo_de_categoria_principal": "codigo_unspsc",
     "duraci_n_del_contrato": "duracion_dias", 
-    "valor_del_contrato": "valor_contrato",
+    "valor_del_contrato": "valor_contrato", 
     "fecha_de_firma": "fecha_firma", 
     "departamento": "departamento", 
     
-    # RUIDOSAS / AUXILIARES (Se eliminan en la Fase 2)
+    # RUIDOSAS / AUXILIARES (Para demostrar limpieza en Fase 2)
     "nit_entidad": "nit_entidad", 
     "localizaci_n": "localizacion", 
     "sector": "sector",
@@ -57,10 +59,11 @@ COLUMNS_SOQL = ", ".join([f"{soql_col} AS {alias}" for soql_col, alias in COLUMN
 def fetch_and_stream_data():
     """Descarga datos de Socrata, filtra y los envía a Kafka."""
     
-    print(f"Buscando contratos en departamentos: {', '.join(DEPARTMENTS)}")
+    print(f"Buscando contratos en departamentos: {', '.join(DEPARTMENTS_SOQL_VALUES)}")
     
     LIMIT = 5000 
     
+    # El filtro revisado usa los nombres estándar
     query = f"""
         SELECT 
             {COLUMNS_SOQL}
@@ -75,16 +78,18 @@ def fetch_and_stream_data():
         results = client.get(SOCRATA_DATASET_ID, query=query)
         
         if not results:
-            print("🚨 No se encontraron contratos con los filtros especificados.")
+            print("🚨 No se encontraron contratos con los filtros especificados. Intente ajustando los nombres de los departamentos.")
             return
 
         print(f"✅ Descargados {len(results)} contratos. Iniciando streaming...")
 
         for i, record in enumerate(results):
             
-            # Asegurar conversión de tipos para consistencia
+            # Asegurar conversión de tipos para consistencia (importante por los separadores de miles)
             try:
-                record['valor_contrato'] = float(record.get('valor_contrato', 0.0))
+                # Quitamos comas y puntos (si hay) y convertimos a float
+                valor_str = str(record.get('valor_contrato', 0)).replace('$', '').replace(',', '')
+                record['valor_contrato'] = float(valor_str)
             except (ValueError, TypeError):
                 record['valor_contrato'] = 0.0
                 
