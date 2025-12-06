@@ -1,0 +1,112 @@
+# ========================================
+#   ARCHIVOS SENSIBLES Y CONFIGURACIONES
+# ========================================
+.env
+*.env
+
+# ========================================
+#   ARCHIVOS Y CARPETAS DE DOCKER
+# ========================================
+# Ignorar todo lo generado por contenedores
+logs/
+**/logs/
+
+# Cosas temporales
+*.pid
+*.sock
+
+# Evitar cachés en la construcción de imágenes
+.dockerignore
+
+# ========================================
+#   AIRFLOW
+# ========================================
+# Airflow logs
+logs/*
+!logs/.gitkeep
+
+# Airflow dags generados por notebooks
+**/.ipynb_checkpoints/
+**/dags/*.pyc
+
+# ========================================
+#   NOTEBOOKS
+# ========================================
+# Checkpoints automáticos de Jupyter
+**/.ipynb_checkpoints/
+*.checkpoint.ipynb
+
+# Archivos temporales
+*.tmp
+*.temp
+
+# ========================================
+#   PYTHON
+# ========================================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Entornos virtuales
+venv/
+.env/
+.env*/
+.venv/
+.venv*/
+
+# ========================================
+#   MLflow
+# ========================================
+mlruns/
+**/mlruns/
+*/mlruns/*
+
+# ========================================
+#   DATOS
+# ========================================
+notebooks/data/
+**/data/
+*.csv
+*.parquet
+*.json
+*.xlsx
+*.zip
+
+# ========================================
+#   SISTEMA OPERATIVO
+# ========================================
+# Windows
+Thumbs.db
+Desktop.ini
+
+# MacOS
+.DS_Store
+
+# Linux
+*.swp
+*.swo
+
+# ========================================
+#   EDITORES
+# ========================================
+# VSCode
+.vscode/
+
+# PyCharm
+.idea/
+
+# ========================================
+#   OTROS
+# ========================================
+# Archivos temporales generales
+*.log
+*.bak
+*.old
+
+# ========================================
+#   EXCEPCIONES (ARCHIVOS QUE SÍ SE SUBEN)
+# ========================================
+!dags/.gitkeep
+!notebooks/.gitkeep
+!logs/.gitkeep
