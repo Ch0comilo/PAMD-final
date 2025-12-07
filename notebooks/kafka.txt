@@ -1,0 +1,2 @@
+docker exec -it python_ml_stack  /bin/bash
+python /app/notebooks/contract_producer.py
