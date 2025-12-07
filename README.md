@@ -35,3 +35,26 @@ docker-compose up --build -d
 | **Airflow UI**   | http://localhost:8081 | `admin`                 | `admin`             |
 | **MLflow UI**    | http://localhost:5000 | N/A                       | N/A                   |
 | **Spark Master** | http://localhost:8080 | N/A                       | N/A                   |
+
+# Activar simulación Kafka
+
+Una vez ya tengan el entorno Docker hacen lo siguiente:
+
+```bash
+docker exec -it python_ml_stack  /bin/bash
+```
+
+luego les debe salir algo como:
+
+```bash
+root@ab59cf153712:/app# 
+```
+
+Ya entraron al Docker de python_ml_stack, luego ejecutan
+
+```bash
+pip install sodapy
+python /app/notebooks/contract_producer.py
+```
+
+Ahora si pueden ejecutar Taller.ipynb
